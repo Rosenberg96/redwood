@@ -3,6 +3,9 @@ import { APIGatewayProxyEvent, Context as LambdaContext } from 'aws-lambda'
 import { ApolloServer, Config } from 'apollo-server-lambda'
 
 import { setContext } from './globalContext'
+import { GraphQLSchema } from "graphql";
+import { executor } from "./executor";
+
 
 export const handleContext = (options: Config) => {
   // Returns a function that deals with the context per request.
@@ -50,6 +53,7 @@ export const createGraphQLHandler = (options: Config = {}, db: any) => {
     playground: process.env.NODE_ENV !== 'production',
     ...options,
     context: handleContext(options),
+    executor: executor(options.schema as GraphQLSchema),
   }).createHandler()
 
   return (
